@@ -1,0 +1,7 @@
+﻿{
+  "Id": "FurnitureFix",
+  "DisplayName": "FurnitureFix",
+  "Author": "NANDbrew",
+  "Version": "1.0.0",
+  "EntryMethod": "FurnitureFix.Main.Load"
+}
