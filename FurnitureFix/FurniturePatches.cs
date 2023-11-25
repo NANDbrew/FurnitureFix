@@ -69,6 +69,7 @@ namespace FurnitureFix
             // show highlight if stove, have held item, and there's a free slot
             if (target is ShipItemStove target2 && lookingPointer.GetHeldItem().GetComponent<CookableFood>() && (StoveCookTrigger)target2.InvokePrivateMethod("GetFreeSlot")) return true;
             if (target is ShipItemBed) return true;
+            if (target is ShipItemLampHook target3 && lookingPointer.GetHeldItem().GetComponent<ShipItemHangable>() && !target3.GetPrivateField<bool>("occupied")) return true;
 
             return false;
         }
