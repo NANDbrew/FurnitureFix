@@ -2,6 +2,10 @@
   "Id": "FurnitureFix",
   "DisplayName": "FurnitureFix",
   "Author": "NANDbrew",
-  "Version": "1.0.0",
-  "EntryMethod": "FurnitureFix.Main.Load"
+  "Version": "1.0.1",
+  "EntryMethod": "FurnitureFix.Main.Load",
+  "Description": "Prevent picking up furniture on your boat unless a key is held",
+  "Tags": ["Bug Fixes", "Tweaks"],
+  "Requirements": ["SailwindModdingHelper"],
+  "Repository": "https://github.com/NANDbrew/FurnitureFix"
 }

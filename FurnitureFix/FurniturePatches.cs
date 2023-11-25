@@ -7,12 +7,13 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
+using static UnityEngine.GraphicsBuffer;
 
 namespace FurnitureFix
 {
     internal class FurniturePatches
     {
-        private static readonly string[] furnitureNames = { "table", "chair", "shelf", "shelves", "stove", "hanger", "painting" };
+        private static readonly string[] furnitureNames = { "table", "chair", "shelf", "stove", "lamp hook", "painting", "bed" };
 
         private static bool playerCrouching;
 
@@ -27,91 +28,82 @@ namespace FurnitureFix
             }
         }
 
-/*        [HarmonyPatch(typeof(GoPointerButton), "Start")]
-        private static class BedTypePatch
-        {
-            [HarmonyPrefix]
-            public static bool Prefix(GoPointerButton __instance)
-            {
-                if (__instance.GetComponent<ShipItemBed>())
-                {
-                    ShipItem shipItem = __instance.GetComponent<ShipItem>();
-                    shipItem.big = false;
-                }
-                return true;
-            }
-        }*/
-
         [HarmonyPatch(typeof(GoPointerButton), "Look")]
         private static class ItemLookPatch
         {
             [HarmonyPrefix]
             public static bool Prefix(GoPointerButton __instance, ref GoPointer lookingPointer)
             {
-                //if (!Main.enabled) return true;
-                bool lookedAt = true;
+                if (!(__instance is PickupableItem target)) return true;
+                if (ShouldShowHighlight(target, lookingPointer)) return true;
+
+                // override default, set neccessary variables, cancel highlight
+                __instance.SetPrivateField("isLookedAt", false);
                 __instance.SetPrivateField("pointedAtBy", lookingPointer);
                 __instance.SetPrivateField("unlookUpdatesPassed", 0);
                 __instance.SetPrivateField("unlookFixedUpdatesPassed", 0);
-                if (__instance is ShipItem target)
-                {
-                    if (IsValidTarget(target))
-                    {
-                        lookedAt = true;
-                    }
-                    else if (target is ShipItemStove target2 && lookingPointer.GetHeldItem().GetComponent<CookableFood>())
-                    {
-                        if(target.sold && (StoveCookTrigger)target2.InvokePrivateMethod("GetFreeSlot"))
-                        {
-                            lookedAt = true;
-                        }
-                        else
-                        {
-                            lookedAt = false;
-                        }
-                    }
-                    else
-                    {
-                        lookedAt = false;
-                    }
-                    //lookedAt = IsValidTarget(shipItem);
-                }
-                __instance.SetPrivateField("isLookedAt", lookedAt);
-                return false;
-            }
-        }
-        [HarmonyPatch(typeof(GoPointer), "PickUpItem")]
-        private static class BedPickupPatch
-        {
-            [HarmonyPrefix]
-            public static bool Prefix(GoPointer __instance, ref ShipItem item)
-            {
-                //if (!Main.enabled) return true;
-                if (IsValidTarget(item))
-                {
-                    if (item.sold && GameState.currentBoat && item is ShipItemBed) 
-                    {
-                        item.OnAltActivate();
-                        return false;
-                    }
-                    return true;
-                }
                 return false;
             }
         }
 
-        public static bool IsValidTarget(ShipItem target) 
+        [HarmonyPatch(typeof(GoPointer), "PickUpItem")]
+        private static class BedPickupPatch
+        {
+            [HarmonyPrefix]
+            public static bool Prefix(GoPointer __instance, ref PickupableItem item)
+            {
+                if (item is ShipItemBed && !CanPickUp(item))
+                {
+
+                    item.OnAltActivate();
+                    return false;
+                } 
+                //Utilities.Log(Utilities.LogType.Log, item.name);
+                return CanPickUp(item);
+            }
+        }
+
+        public static bool ShouldShowHighlight(PickupableItem target, GoPointer lookingPointer)
+        {
+            if (CanPickUp(target)) return true;
+            // show highlight if stove, have held item, and there's a free slot
+            if (target is ShipItemStove target2 && lookingPointer.GetHeldItem().GetComponent<CookableFood>() && (StoveCookTrigger)target2.InvokePrivateMethod("GetFreeSlot")) return true;
+            if (target is ShipItemBed) return true;
+
+            return false;
+        }
+
+        public static bool CanPickUp(PickupableItem target)
         {
             if (furnitureNames.Any(target.name.Contains))
             {
-                if (!target.sold || !GameState.currentBoat) return true;
+                if (!GameState.currentBoat) return true;
                 if (Main.settings.crouchPickup && playerCrouching) return true;
                 if (GameInput.GetKey(InputName.Custom1)) return true;
                 return false;
             }
             return true;
         }
+        [HarmonyPatch(typeof(GoPointerButton), "FixedUpdate")]
+        private static class GoPointerButtonUpdateLookTextPatch
+        {
+            [HarmonyPrefix]
+            public static bool Prefix(GoPointerButton __instance)
+            {
+                __instance.lookText = __instance.name;
+                return true;
+            }
+        }
+        [HarmonyPatch(typeof(ShipItem), "UpdateLookText")]
+        private static class ShipItemUpdateLookTextPatch
+        {
+            [HarmonyPrefix]
+            public static bool Prefix(ShipItem __instance)
+            {
+                __instance.lookText = __instance.name;
 
-
+                return false;
+            }
+        }
     }
 }
