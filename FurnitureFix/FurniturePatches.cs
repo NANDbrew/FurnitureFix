@@ -84,7 +84,7 @@ namespace FurnitureFix
             }
             return true;
         }
-        [HarmonyPatch(typeof(GoPointerButton), "FixedUpdate")]
+/*        [HarmonyPatch(typeof(GoPointerButton), "FixedUpdate")]
         private static class GoPointerButtonUpdateLookTextPatch
         {
             [HarmonyPrefix]
@@ -104,6 +104,6 @@ namespace FurnitureFix
 
                 return false;
             }
-        }
+        }*/
     }
 }
