@@ -13,7 +13,7 @@ namespace FurnitureFix
 {
     internal class FurniturePatches
     {
-        private static readonly string[] furnitureNames = { "table", "chair", "shelf", "stove", "lamp hook", "painting", "bed" };
+        private static readonly string[] furnitureNames = { "table", "chair", "shelf", "shelves", "stove", "lamp hook", "lamp hanger", "painting", "bed" };
 
         private static bool playerCrouching;
 
