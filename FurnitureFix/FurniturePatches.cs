@@ -2,6 +2,7 @@
 using SailwindModdingHelper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,37 +21,27 @@ namespace FurnitureFix
         [HarmonyPatch(typeof(PlayerCrouching), "Update")]
         private static class PlayerCrouchingPatch
         {
-            [HarmonyPrefix]
-            public static bool Pretfix(PlayerCrouching __instance)
+            public static void Postfix(bool ___crouching)
             {
-                playerCrouching = __instance.GetPrivateField<bool>("crouching");
-                return true;
+                playerCrouching = ___crouching;
             }
         }
 
         [HarmonyPatch(typeof(GoPointerButton), "Look")]
         private static class ItemLookPatch
         {
-            [HarmonyPrefix]
-            public static bool Prefix(GoPointerButton __instance, ref GoPointer lookingPointer)
+            public static bool Prefix(GoPointerButton __instance, GoPointer lookingPointer)
             {
                 if (!(__instance is PickupableItem target)) return true;
-                if (ShouldShowHighlight(target, lookingPointer)) return true;
 
-                // override default, set neccessary variables, cancel highlight
-                __instance.SetPrivateField("isLookedAt", false);
-                __instance.SetPrivateField("pointedAtBy", lookingPointer);
-                __instance.SetPrivateField("unlookUpdatesPassed", 0);
-                __instance.SetPrivateField("unlookFixedUpdatesPassed", 0);
-                return false;
+                return ShouldShowHighlight(target, lookingPointer);
             }
         }
 
         [HarmonyPatch(typeof(GoPointer), "PickUpItem")]
         private static class BedPickupPatch
         {
-            [HarmonyPrefix]
-            public static bool Prefix(GoPointer __instance, ref PickupableItem item)
+            public static bool Prefix(PickupableItem item)
             {
                 if (item is ShipItemBed && !CanPickUp(item))
                 {
@@ -69,6 +60,7 @@ namespace FurnitureFix
             // show highlight if stove, have held item, and there's a free slot
             if (target is ShipItemStove target2 && lookingPointer.GetHeldItem().GetComponent<CookableFood>() && (StoveCookTrigger)target2.InvokePrivateMethod("GetFreeSlot")) return true;
             if (target is ShipItemBed) return true;
+            // show highlight if lamp hook, have hangable item, and hook is unoccupied
             if (target is ShipItemLampHook target3 && lookingPointer.GetHeldItem().GetComponent<ShipItemHangable>() && !target3.GetPrivateField<bool>("occupied")) return true;
 
             return false;
