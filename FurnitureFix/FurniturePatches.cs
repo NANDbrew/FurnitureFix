@@ -49,7 +49,6 @@ namespace FurnitureFix
                     item.OnAltActivate();
                     return false;
                 } 
-                //Utilities.Log(Utilities.LogType.Log, item.name);
                 return CanPickUp(item);
             }
         }
@@ -73,30 +72,38 @@ namespace FurnitureFix
                 if (!GameState.currentBoat) return true;
                 if (Main.settings.crouchPickup && playerCrouching) return true;
                 if (GameInput.GetKey(InputName.Custom1)) return true;
+                if (target.GetComponent<ShipItemInventory>().inInventory) return true;
+
                 return false;
             }
             return true;
         }
-/*        [HarmonyPatch(typeof(GoPointerButton), "FixedUpdate")]
-        private static class GoPointerButtonUpdateLookTextPatch
+        [HarmonyPatch(typeof(ShipItem))]
+        private static class ShipItemPatches
         {
+            [HarmonyPatch("Awake")]
             [HarmonyPrefix]
-            public static bool Prefix(GoPointerButton __instance)
+            public static void Prefix(ShipItem __instance, bool ___big)
             {
-                __instance.lookText = __instance.name;
-                return true;
+                if (!__instance.GetComponent<ShipItemInventory>() && !___big) 
+                {
+                    __instance.gameObject.AddComponent<ShipItemInventory>();
+                }
             }
-        }
-        [HarmonyPatch(typeof(ShipItem), "UpdateLookText")]
-        private static class ShipItemUpdateLookTextPatch
-        {
-            [HarmonyPrefix]
-            public static bool Prefix(ShipItem __instance)
-            {
-                __instance.lookText = __instance.name;
 
-                return false;
+            [HarmonyPatch("OnEnterInventory")]
+            [HarmonyPrefix]
+            public static void OnEnterInventory(ShipItem __instance)
+            {
+                __instance.GetComponent<ShipItemInventory>().inInventory = true;
             }
-        }*/
+
+            [HarmonyPatch("OnLeaveInventory")]
+            [HarmonyPrefix]
+            public static void OnLeaveInventory(ShipItem __instance)
+            {
+                __instance.GetComponent<ShipItemInventory>().inInventory = false;
+            }
+        }        
     }
 }

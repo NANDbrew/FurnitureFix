@@ -2,7 +2,7 @@
   "Id": "FurnitureFix",
   "DisplayName": "FurnitureFix",
   "Author": "NANDbrew",
-  "Version": "1.0.1",
+  "Version": "1.0.3",
   "EntryMethod": "FurnitureFix.Main.Load",
   "Description": "Prevent picking up furniture on your boat unless a key is held",
   "Tags": ["Bug Fixes", "Tweaks"],

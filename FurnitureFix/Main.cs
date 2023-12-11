@@ -32,7 +32,6 @@ namespace FurnitureFix
 
             settings = UnityModManager.ModSettings.Load<ModSettings>(modEntry);
             logger = modEntry.Logger;
-            Utilities.SetLogger(modEntry.Logger);
 
             // uncomment if using settings
             modEntry.OnGUI = OnGUI;

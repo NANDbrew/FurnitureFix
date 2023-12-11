@@ -44,8 +44,9 @@
     <Reference Include="Oculus.VR">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Sailwind\Sailwind_Data\Managed\Oculus.VR.dll</HintPath>
     </Reference>
-    <Reference Include="SailwindModdingHelper">
-      <HintPath>..\..\SailwindModdingHelper\SailwindModdingHelper\bin\Release\SailwindModdingHelper.dll</HintPath>
+    <Reference Include="SailwindModdingHelper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Desktop\Sailwind\Mods\SailwindModdingHelper\SailwindModdingHelper.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Sailwind\Sailwind_Data\Managed\System.dll</HintPath>
@@ -64,7 +65,7 @@
     <Compile Include="FurniturePatches.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utilities.cs" />
+    <Compile Include="ShipItemInventory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="info.json">
