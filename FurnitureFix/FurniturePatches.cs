@@ -1,14 +1,7 @@
 ﻿using HarmonyLib;
 using SailwindModdingHelper;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
-using UnityEngine.Assertions.Must;
-using static UnityEngine.GraphicsBuffer;
+
 
 namespace FurnitureFix
 {
@@ -60,7 +53,7 @@ namespace FurnitureFix
             if (target is ShipItemStove target2 && lookingPointer.GetHeldItem().GetComponent<CookableFood>() && (StoveCookTrigger)target2.InvokePrivateMethod("GetFreeSlot")) return true;
             if (target is ShipItemBed) return true;
             // show highlight if lamp hook, have hangable item, and hook is unoccupied
-            if (target is ShipItemLampHook target3 && lookingPointer.GetHeldItem().GetComponent<ShipItemHangable>() && !target3.GetPrivateField<bool>("occupied")) return true;
+            if (target is ShipItemLampHook target3 && (lookingPointer.GetHeldItem() != null && lookingPointer.GetHeldItem().GetComponent<ShipItemHangable>() != null) && !target3.GetPrivateField<bool>("occupied")) return true;
 
             return false;
         }
@@ -70,10 +63,9 @@ namespace FurnitureFix
             if (furnitureNames.Any(target.name.Contains))
             {
                 if (!GameState.currentBoat) return true;
-                if (Main.settings.crouchPickup && playerCrouching) return true;
+                if (Main.instance.crouchPickup.Value && playerCrouching) return true;
                 if (GameInput.GetKey(InputName.Custom1)) return true;
-                if (target.GetComponent<ShipItemInventory>().inInventory) return true;
-
+                if (target is ShipItem && target.GetComponent<ShipItemInventory>() != null && target.GetComponent<ShipItemInventory>().inInventory) return true;
                 return false;
             }
             return true;
@@ -85,10 +77,9 @@ namespace FurnitureFix
             [HarmonyPrefix]
             public static void Prefix(ShipItem __instance, bool ___big)
             {
-                if (!__instance.GetComponent<ShipItemInventory>() && !___big) 
-                {
+
                     __instance.gameObject.AddComponent<ShipItemInventory>();
-                }
+
             }
 
             [HarmonyPatch("OnEnterInventory")]
@@ -96,6 +87,8 @@ namespace FurnitureFix
             public static void OnEnterInventory(ShipItem __instance)
             {
                 __instance.GetComponent<ShipItemInventory>().inInventory = true;
+                Main.logSource.LogInfo("enter inventory");
+
             }
 
             [HarmonyPatch("OnLeaveInventory")]

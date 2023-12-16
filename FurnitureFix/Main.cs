@@ -1,55 +1,39 @@
 ﻿using HarmonyLib;
 using System.Reflection;
 using UnityEngine;
-using UnityModManagerNet;
+using BepInEx;
+using BepInEx.Configuration;
+using BepInEx.Logging;
+using BepInEx.Harmony;
 
 namespace FurnitureFix
 {
-    public class ModSettings : UnityModManager.ModSettings, IDrawable
+    [BepInPlugin(GUID, NAME, VERSION)]
+    [BepInDependency("com.app24.sailwindmoddinghelper", "2.0.0")]
+    internal class Main : BaseUnityPlugin
     {
-        // place settings here
-        [Draw("Allow crouch pickup: ")] public bool crouchPickup = true;
-        [Draw("Pickup modifier: ")] public KeyCode pickupModifier = KeyCode.LeftAlt;
+        public const string GUID = "com.nandbrew.furniturefix";
+        public const string NAME = "Furniture Fix";
+        public const string VERSION = "1.0.3";
+
+        internal static Main instance;
+
+        internal static ManualLogSource logSource;
+
+        internal ConfigEntry<bool> crouchPickup;
+        internal ConfigEntry<KeyCode> pickupModifier;
 
 
-        public override void Save(UnityModManager.ModEntry modEntry)
+        private void Awake()
         {
-            Save(this, modEntry);
-        }
+            instance = this;
+            logSource = Logger;
+            Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), GUID);
 
-        public void OnChange() { }
-    }
+            crouchPickup = Config.Bind("Options", "Allow crouch pickup", true);
+            pickupModifier = Config.Bind("Options", "Pickup modifier", KeyCode.LeftAlt);
+            GameInput.SetKeyMap(InputName.Custom1, pickupModifier.Value, true);
 
-    internal static class Main
-    {
-        public static ModSettings settings;
-        public static UnityModManager.ModEntry.ModLogger logger;
-
-        static bool Load(UnityModManager.ModEntry modEntry)
-        {
-            var harmony = new Harmony(modEntry.Info.Id);
-            harmony.PatchAll(Assembly.GetExecutingAssembly());
-
-            settings = UnityModManager.ModSettings.Load<ModSettings>(modEntry);
-            logger = modEntry.Logger;
-
-            // uncomment if using settings
-            modEntry.OnGUI = OnGUI;
-            modEntry.OnSaveGUI = OnSaveGUI;
-
-            GameInput.SetKeyMap(InputName.Custom1, settings.pickupModifier, true);
-
-            return true;
-        }
-
-        static void OnGUI(UnityModManager.ModEntry modEntry)
-        {
-            settings.Draw(modEntry);
-        }
-
-        static void OnSaveGUI(UnityModManager.ModEntry modEntry)
-        {
-            settings.Save(modEntry);
         }
     }
 }
