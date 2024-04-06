@@ -1,6 +1,6 @@
 ﻿{
     "name": "FurnitureFix",
-    "version_number": "1.0.3",
+    "version_number": "1.0.4",
     "website_url": "https://github.com/NANDbrew/FurnitureFix",
     "description": "Furniture can't be picked up unless you're holding the modifier [LeftAlt], or crouching",
     "dependencies": [
