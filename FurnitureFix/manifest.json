@@ -1,0 +1,10 @@
+﻿{
+    "name": "FurnitureFix",
+    "version_number": "1.0.3",
+    "website_url": "https://github.com/NANDbrew/FurnitureFix",
+    "description": "Furniture can't be picked up unless you're holding the modifier [LeftAlt], or crouching",
+    "dependencies": [
+        "BepInEx-BepInExPack-5.4.2100",
+        "App24-SailwindModdingHelper-2.0.3"
+    ]
+}

@@ -77,9 +77,10 @@ namespace FurnitureFix
             [HarmonyPrefix]
             public static void Prefix(ShipItem __instance, bool ___big)
             {
-
+                if (!___big)
+                {
                     __instance.gameObject.AddComponent<ShipItemInventory>();
-
+                }
             }
 
             [HarmonyPatch("OnEnterInventory")]
