@@ -86,12 +86,15 @@
     <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\UnityEngine.Core.2018.1.0\lib\net35\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Sailwind\Sailwind_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FurniturePatches.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShipItemInventory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -104,10 +107,12 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y "NANDTweaks.dll" "C:\Program Files (x86)\Steam\steamapps\common\Sailwind\BepInEx\plugins\FurnitureFix"
-cd "..\.."
+    <PostBuildEvent>mkdir "C:\Program Files (x86)\Steam\steamapps\common\Sailwind\BepInEx\plugins\FurnitureFix"
+xcopy /y "FurnitureFix.dll" "C:\Program Files (x86)\Steam\steamapps\common\Sailwind\BepInEx\plugins\FurnitureFix"
+cd ..\
 xcopy /y "manifest.json" "C:\Program Files (x86)\Steam\steamapps\common\Sailwind\BepInEx\plugins\FurnitureFix"
-xcopy /y "readme.md" "C:\Program Files (x86)\Steam\steamapps\common\Sailwind\BepInEx\plugins\FurnitureFix"</PostBuildEvent>
+xcopy /y "readme.md" "C:\Program Files (x86)\Steam\steamapps\common\Sailwind\BepInEx\plugins\FurnitureFix"
+xcopy /y "icon.png" "C:\Program Files (x86)\Steam\steamapps\common\Sailwind\BepInEx\plugins\FurnitureFix"</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\BepInEx.Core.5.4.11\build\BepInEx.Core.targets" Condition="Exists('..\packages\BepInEx.Core.5.4.11\build\BepInEx.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

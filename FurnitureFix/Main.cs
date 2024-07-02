@@ -9,19 +9,20 @@ using BepInEx.Harmony;
 namespace FurnitureFix
 {
     [BepInPlugin(GUID, NAME, VERSION)]
-    [BepInDependency("com.app24.sailwindmoddinghelper", "2.0.0")]
+    //[BepInDependency("com.app24.sailwindmoddinghelper", "2.0.0")]
     internal class Main : BaseUnityPlugin
     {
         public const string GUID = "com.nandbrew.furniturefix";
         public const string NAME = "Furniture Fix";
-        public const string VERSION = "1.0.4";
+        public const string VERSION = "1.1.0";
 
         internal static Main instance;
 
         internal static ManualLogSource logSource;
 
-        internal ConfigEntry<bool> crouchPickup;
-        internal ConfigEntry<KeyCode> pickupModifier;
+        internal static ConfigEntry<bool> crouchPickup;
+        internal static ConfigEntry<KeyCode> pickupModifier;
+        internal static ConfigEntry<bool> lockMaps;
 
 
         private void Awake()
@@ -32,7 +33,7 @@ namespace FurnitureFix
 
             crouchPickup = Config.Bind("Options", "Allow crouch pickup", true);
             pickupModifier = Config.Bind("Options", "Pickup modifier", KeyCode.LeftAlt);
-            GameInput.SetKeyMap(InputName.Custom1, pickupModifier.Value, true);
+            lockMaps = Config.Bind("Options", "Lock unrolled maps", true);
 
         }
     }
