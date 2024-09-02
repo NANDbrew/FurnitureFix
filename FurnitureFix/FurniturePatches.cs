@@ -116,7 +116,7 @@ namespace FurnitureFix
                 if (!item.currentActualBoat || !item.currentWalkCol) return true;
                 if (item.category == TransactionCategory.furniture)
                 {
-                    if (item is ShipItemFoldable && (item.amount != 1 && Main.lockMaps.Value)) return false;
+                    if (item is ShipItemFoldable && (item.amount == 1 || !Main.lockMaps.Value)) return true;
                     return false;
                 }
             }
@@ -126,9 +126,11 @@ namespace FurnitureFix
         [HarmonyPatch(typeof(LookUI), "ShowLookText")]
         private static class ControlHintPrePatch
         {
-            public static void Prefix(LookUI __instance)
+            public static void Prefix(LookUI __instance, TextMesh ___controlsText)
             {
-                __instance.ClearText();
+                ___controlsText.text = "";
+
+                //__instance.ClearText();
             }
         }
         [HarmonyPatch(typeof(LookUI), "ShowLookText")]
@@ -142,7 +144,7 @@ namespace FurnitureFix
                     ___controlsText.text += "use";
                     AccessTools.Method(__instance.GetType(), "ShowRicon").Invoke(__instance, new object[0]);
                 }
-                if (button is ShipItem item && item.category == TransactionCategory.furniture)
+                else if (button is ShipItem item && item.category == TransactionCategory.furniture)
                 {
                     if (item is ShipItemBed)
                     {
@@ -155,7 +157,7 @@ namespace FurnitureFix
                             }
                             else
                             {
-                                ___textLicon.text = GameInput.GetKeyCode(InputName.PickUp, ___altIconsOn).ToString();
+                                ___textLicon.text = GameInput.GetKeyCode(InputName.PickUp, ___altIconsOn, false).ToString();
                             }
                             ___controlsText.text = "use\nuse";
                             AccessTools.Method(__instance.GetType(), "ShowRicon").Invoke(__instance, new object[0]);
@@ -197,10 +199,10 @@ namespace FurnitureFix
                         {
                             if (CargoStorageUI.loadingCargoMode)
                             {
-                                ___textRIcon.text = Main.pickupModifier.Value + " + " + GameInput.GetKeyCode(InputName.Activate, ___altIconsOn);
+                                ___textRIcon.text = Main.pickupModifier.Value + " + " + GameInput.GetKeyCode(InputName.Activate, ___altIconsOn, false);
                             }
 
-                            ___textLicon.text = Main.pickupModifier.Value + " + " + GameInput.GetKeyCode(InputName.PickUp, ___altIconsOn);
+                            ___textLicon.text = Main.pickupModifier.Value + " + " + GameInput.GetKeyCode(InputName.PickUp, ___altIconsOn, false);
                         }
                     }
                     else if (___altIconsOn)
@@ -216,9 +218,9 @@ namespace FurnitureFix
                     {
                         if (CargoStorageUI.loadingCargoMode)
                         {
-                            ___textRIcon.text = GameInput.GetKeyCode(InputName.Activate, ___altIconsOn).ToString();
+                            ___textRIcon.text = GameInput.GetKeyCode(InputName.Activate, ___altIconsOn, false).ToString();
                         }
-                        ___textLicon.text = GameInput.GetKeyCode(InputName.PickUp, ___altIconsOn).ToString();
+                        ___textLicon.text = GameInput.GetKeyCode(InputName.PickUp, ___altIconsOn, false).ToString();
                     }
 
                 }
@@ -235,9 +237,9 @@ namespace FurnitureFix
                 {
                     if (CargoStorageUI.loadingCargoMode)
                     {
-                        ___textRIcon.text = GameInput.GetKeyCode(InputName.Activate, ___altIconsOn).ToString();
+                        ___textRIcon.text = GameInput.GetKeyCode(InputName.Activate, ___altIconsOn, false).ToString();
                     }
-                    ___textLicon.text = GameInput.GetKeyCode(InputName.PickUp, ___altIconsOn).ToString();
+                    ___textLicon.text = GameInput.GetKeyCode(InputName.PickUp, ___altIconsOn, false).ToString();
                 }                
             }
         }

@@ -4,6 +4,8 @@ Furniture cannot be picked up when it's on a boat except in the following condit
 - Holding the modifier key (configurable, Left Alt by default)
 - Crouching (can be disabled)
 
+Maps are locked unless rolled up (configurable, on by default)
+
 Options can be adjusted two ways:
 - Editing the config file: Sailwind/BepInEx/config/com.nandbrew.furniturefix.cfg
 - BepInEx Configuration manager: https://github.com/BepInEx/BepInEx.ConfigurationManager/releases/latest
