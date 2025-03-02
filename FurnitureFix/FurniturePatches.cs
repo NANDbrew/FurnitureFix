@@ -95,11 +95,11 @@ namespace FurnitureFix
                         }
                     }
                     else if (lookingPointer.GetHeldItem() is ShipItemStoveFuel) return true;
-                    return false;// && (StoveCookTrigger)target2.InvokePrivateMethod("GetFreeSlot")) return true;
+                    return false;
                 }
 
                 // show highlight if lamp hook, have hangable item, and hook is unoccupied
-                if (target is ShipItemLampHook target3 && lookingPointer.GetHeldItem() && lookingPointer.GetHeldItem().GetComponent<ShipItemHangable>() && !(bool)Traverse.Create(target3).Field("occupied").GetValue()) return true;
+                if (target is ShipItemLampHook target3 && lookingPointer.GetHeldItem()?.GetComponent<ShipItemHangable>() && !(bool)Traverse.Create(target3).Field("occupied").GetValue()) return true;
                 return false;
             }
             return true;
@@ -119,6 +119,10 @@ namespace FurnitureFix
                     if (item is ShipItemFoldable && (item.amount == 1 || !Main.lockMaps.Value)) return true;
                     return false;
                 }
+                if (item.wallAttachment && item.GetItemRigidbody().attached)
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -136,15 +140,16 @@ namespace FurnitureFix
         [HarmonyPatch(typeof(LookUI), "ShowLookText")]
         private static class ControlHintPatch
         {
-            public static void Postfix(LookUI __instance, GoPointer ___pointer, GoPointerButton button, TextMesh ___controlsText, TextMesh ___textLicon, TextMesh ___textRIcon, bool ___altIconsOn, bool ___showingIcon)
+            public static void Postfix(LookUI __instance, GoPointer ___pointer, GoPointerButton button, TextMesh ___controlsText, TextMesh ___textLicon, TextMesh ___textRIcon, bool ___altIconsOn, bool ___showingIcon, bool ___useAltIcons)
             {
+                if (!___showingIcon) return;
                 //___textLicon.text = "";
                 if (button is PickupableBoatMooringRope rope && rope.IsMoored())
                 {
                     ___controlsText.text += "use";
                     AccessTools.Method(__instance.GetType(), "ShowRicon").Invoke(__instance, new object[0]);
                 }
-                else if (button is ShipItem item && item.category == TransactionCategory.furniture)
+                else if (button is ShipItem item && (item.category == TransactionCategory.furniture || item.wallAttachment))
                 {
                     if (item is ShipItemBed)
                     {
@@ -213,7 +218,6 @@ namespace FurnitureFix
                         }
                         ___textLicon.text = "";
                     }
-
                     else
                     {
                         if (CargoStorageUI.loadingCargoMode)
@@ -232,7 +236,6 @@ namespace FurnitureFix
                     }
                     ___textLicon.text = "";
                 }
-
                 else
                 {
                     if (CargoStorageUI.loadingCargoMode)
