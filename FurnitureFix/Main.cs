@@ -14,7 +14,7 @@ namespace FurnitureFix
     {
         public const string GUID = "com.nandbrew.furniturefix";
         public const string NAME = "Furniture Fix";
-        public const string VERSION = "1.1.2";
+        public const string VERSION = "1.1.3";
 
         internal static Main instance;
 
